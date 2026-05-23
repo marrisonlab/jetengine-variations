@@ -1,0 +1,38 @@
+/* JetEngine Color Swatches – Admin */
+
+.jecs-field-wrap .wp-color-result {
+	border-radius: 3px;
+}
+
+.jecs-image-uploader {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex-wrap: wrap;
+}
+
+.jecs-image-preview img {
+	display: block;
+	border: 2px solid #e0e0e0;
+	border-radius: 4px;
+}
+
+/* Anteprima swatch nella colonna lista termini */
+.column-jecs_swatch {
+	width: 70px;
+}
+
+.column-jecs_swatch .jecs-swatch__inner {
+	display: inline-block;
+	width: 24px;
+	height: 24px;
+	border: 2px solid #ccc;
+	border-radius: 50%;
+	vertical-align: middle;
+}
+
+/* Settings page */
+.jecs-settings-wrap table.widefat td,
+.jecs-settings-wrap table.widefat th {
+	padding: 10px 12px;
+}

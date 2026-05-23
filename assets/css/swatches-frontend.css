@@ -1,0 +1,190 @@
+/* JetEngine Color Swatches – Frontend */
+
+.jecs-swatches {
+	display: flex !important;
+	flex-direction: row !important;
+	flex-wrap: wrap !important;
+	align-items: center !important;
+	justify-content: flex-start !important;
+	gap: var(--jecs-gap, 6px) !important;
+}
+
+/* ---- Swatch base ---- */
+.jecs-swatch {
+	position: relative;
+	display: inline-flex !important;
+	flex: 0 0 auto !important;
+	flex-direction: row !important;
+	width: auto !important;
+	cursor: pointer;
+	transition: transform 0.15s ease;
+}
+
+.jecs-swatch:hover {
+	transform: scale(1.12);
+	z-index: 2;
+}
+
+.jecs-swatch__inner {
+	display: block;
+	width: var(--jecs-size, 18px);
+	height: var(--jecs-size, 18px);
+	border-style: solid;
+	border-width: 2px;
+	border-color: #e0e0e0;
+	box-sizing: border-box;
+	transition: border-color 0.15s ease, box-shadow 0.15s ease;
+	overflow: hidden;
+}
+
+/* ---- Forme ---- */
+.jecs-swatch--circle .jecs-swatch__inner {
+	border-radius: 50%;
+}
+
+.jecs-swatch--rounded .jecs-swatch__inner {
+	border-radius: 4px;
+}
+
+.jecs-swatch--square .jecs-swatch__inner {
+	border-radius: 0;
+}
+
+/* ---- Swatch testuale (per taglie) ---- */
+.jecs-swatch--text .jecs-swatch__inner {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0 8px;
+	min-width: var(--jecs-size, 36px);
+	min-height: var(--jecs-size, 36px);
+	background-color: #ffffff;
+	font-size: 12px;
+	font-weight: 500;
+	color: #333333;
+	line-height: 1.2;
+	text-transform: uppercase;
+	white-space: nowrap;
+}
+
+.jecs-swatch--text:hover .jecs-swatch__inner {
+	background-color: #f5f5f5;
+}
+
+.jecs-swatch--text.jecs-swatch--active .jecs-swatch__inner {
+	background-color: #333333;
+	color: #ffffff;
+	border-color: #333333;
+}
+
+/* ---- Hover & Attivo ---- */
+.jecs-swatch:hover .jecs-swatch__inner,
+.jecs-swatch--active .jecs-swatch__inner {
+	border-color: #000;
+	box-shadow: 0 0 0 1px #fff, 0 0 0 2px #000;
+}
+
+/* ---- Out of stock ---- */
+.jecs-swatch--oos {
+	opacity: 0.4;
+	cursor: not-allowed;
+}
+
+.jecs-swatch--oos .jecs-swatch__inner::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(
+		to bottom right,
+		transparent calc(50% - 1px),
+		rgba(255,255,255,0.8) calc(50% - 1px),
+		rgba(255,255,255,0.8) calc(50% + 1px),
+		transparent calc(50% + 1px)
+	);
+	border-radius: inherit;
+}
+
+/* ---- Tooltip ---- */
+.jecs-swatch__tooltip {
+	display: none;
+	position: absolute;
+	bottom: calc(100% + 6px);
+	left: 50%;
+	transform: translateX(-50%);
+	white-space: nowrap;
+	background: #222;
+	color: #fff;
+	font-size: 11px;
+	line-height: 1.4;
+	padding: 3px 7px;
+	border-radius: 3px;
+	pointer-events: none;
+	z-index: 10;
+}
+
+.jecs-swatch__tooltip::after {
+	content: '';
+	position: absolute;
+	top: 100%;
+	left: 50%;
+	transform: translateX(-50%);
+	border: 4px solid transparent;
+	border-top-color: #222;
+}
+
+.jecs-swatch:hover .jecs-swatch__tooltip {
+	display: block;
+}
+
+/* ---- Listing: forza dimensione indipendentemente dall'inline style del widget ---- */
+.jecs-swatches:not(.jecs-swatches--single) .jecs-swatch__inner {
+	width: 16px !important;
+	height: 16px !important;
+}
+.jecs-swatches:not(.jecs-swatches--single) .jecs-swatch-counter {
+	width: 16px !important;
+	height: 16px !important;
+}
+
+/* ---- Singolo prodotto WooCommerce ---- */
+
+.jecs-swatches--single {
+	margin-bottom: 10px;
+	--jecs-size: 18px;
+}
+
+/*
+ * Nasconde il select nativo SOLO per gli attributi con swatch abilitati.
+ * Il selettore fratello adiacente (+) garantisce che siano nascosti
+ * esclusivamente i <select> preceduti da una riga di swatch,
+ * lasciando intatti tutti gli altri attributi (es. taglie).
+ */
+.jecs-swatches--single + select,
+.jecs-swatches--single + .jecs-native-select {
+	display: none !important;
+}
+
+/* ---- Hover image nel listing: fade crossfade ---- */
+img[data-hover-src] {
+	transition: opacity 0.15s ease;
+}
+
+img[data-hover-src].jecs-img-fading {
+	opacity: 0;
+}
+
+/* ---- Counter (+N) ---- */
+.jecs-swatch-counter {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: var(--jecs-size, 18px);
+	height: var(--jecs-size, 18px);
+	border-radius: 50%;
+	background: #f5f5f5;
+	border: 2px solid #e0e0e0;
+	font-size: 11px;
+	font-weight: 600;
+	color: #555;
+	cursor: default;
+}
