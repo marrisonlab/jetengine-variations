@@ -18,6 +18,66 @@ final class JECS_Swatches_Renderer {
 	private function __construct() {}
 
 	/* ---------------------------------------------------------------
+	 * Helper per immagini webp
+	 * --------------------------------------------------------------- */
+
+	/**
+	 * Ottiene l'URL dell'immagine, preferendo la versione webp se disponibile
+	 *
+	 * @param int    $attachment_id ID dell'allegato
+	 * @param string $size           Dimensione dell'immagine
+	 * @return string|false URL dell'immagine o false
+	 */
+	private function get_image_url( int $attachment_id, string $size = 'thumbnail' ) {
+		$url = wp_get_attachment_image_url( $attachment_id, $size );
+		if ( ! $url ) {
+			return false;
+		}
+
+		// Prova a ottenere la versione webp
+		$webp_url = $this->get_webp_url( $url );
+		if ( $webp_url && $this->webp_file_exists( $webp_url ) ) {
+			return $webp_url;
+		}
+
+		return $url;
+	}
+
+	/**
+	 * Converte un URL immagine in URL webp
+	 */
+	private function get_webp_url( string $url ): string {
+		// Rimuovi query string se presente
+		$url = strtok( $url, '?' );
+
+		// Sostituisci estensioni comuni con .webp
+		$extensions = [ '.jpg', '.jpeg', '.png', '.gif' ];
+		foreach ( $extensions as $ext ) {
+			if ( str_ends_with( strtolower( $url ), $ext ) ) {
+				return substr( $url, 0, -strlen( $ext ) ) . '.webp';
+			}
+		}
+
+		return $url . '.webp';
+	}
+
+	/**
+	 * Verifica se il file webp esiste
+	 */
+	private function webp_file_exists( string $url ): bool {
+		// Converti URL in percorso locale
+		$upload_dir = wp_upload_dir();
+		$base_url   = $upload_dir['baseurl'];
+
+		if ( strpos( $url, $base_url ) === 0 ) {
+			$file_path = $upload_dir['basedir'] . substr( $url, strlen( $base_url ) );
+			return file_exists( $file_path );
+		}
+
+		return false;
+	}
+
+	/* ---------------------------------------------------------------
 	 * API pubblica
 	 * --------------------------------------------------------------- */
 
@@ -39,6 +99,9 @@ final class JECS_Swatches_Renderer {
 			return '';
 		}
 
+		// Determina il contesto: se siamo in una pagina prodotto singola o in un listing
+		$is_single_product = is_product() && is_singular( 'product' );
+
 		$defaults = [
 			'size'         => 16,
 			'shape'        => 'circle',   // circle | square | rounded
@@ -46,6 +109,7 @@ final class JECS_Swatches_Renderer {
 			'link_to'      => 'none',     // none | product
 			'max_swatches' => 0,          // 0 = illimitato
 			'gap'          => 6,
+			'context'      => $is_single_product ? 'single' : 'listing',   // single | listing
 		];
 		$options = wp_parse_args( $options, $defaults );
 
@@ -62,6 +126,12 @@ final class JECS_Swatches_Renderer {
 			if ( ! JECS_Admin_Settings::is_enabled( $attr_taxonomy ) ) {
 				continue;
 			}
+			// Se siamo in listing, verifica il flag show_in_listing
+			if ( 'listing' === $options['context'] && ! $this->is_attribute_show_in_listing( $attr_taxonomy ) ) {
+				error_log( 'JECS Listing Filter - Skipping ' . $attr_taxonomy . ' (show_in_listing flag not set)' );
+				continue;
+			}
+			error_log( 'JECS Listing Filter - Rendering ' . $attr_taxonomy . ' (context: ' . $options['context'] . ', is_single_product: ' . ( $is_single_product ? 'true' : 'false' ) . ')' );
 			$output .= $this->render_attribute_swatches( $product_id, $attr_taxonomy, $values, $options );
 		}
 
@@ -154,7 +224,13 @@ final class JECS_Swatches_Renderer {
 	}
 
 	private function build_swatch_item( int $term_id, $term, array $options, array $available_slugs ): string {
-		$type    = get_term_meta( $term_id, '_jecs_type',    true ) ?: 'color';
+		// Ottieni il tipo di swatch dall'attributo (livello superiore) o fallback al termine
+		$taxonomy = $term ? $term->taxonomy : '';
+		$attribute_type = $this->get_attribute_swatch_type( $taxonomy );
+		$term_type = get_term_meta( $term_id, '_jecs_type', true );
+
+		// Forza l'uso del tipo dell'attributo se definito
+		$type = $attribute_type ?: ( $term_type ?: 'color' );
 		$color_1 = get_term_meta( $term_id, '_jecs_color_1', true ) ?: '#cccccc';
 		$color_2 = get_term_meta( $term_id, '_jecs_color_2', true ) ?: '';
 		$color_3 = get_term_meta( $term_id, '_jecs_color_3', true ) ?: '';
@@ -243,7 +319,7 @@ final class JECS_Swatches_Renderer {
 		}
 
 		if ( $type === 'image' && $img_id ) {
-			$url = wp_get_attachment_image_url( $img_id, 'thumbnail' );
+			$url = $this->get_image_url( $img_id, 'thumbnail' );
 			if ( $url ) {
 				return "background-image:url('" . esc_url( $url ) . "');background-size:cover;background-position:center;";
 			}
@@ -303,7 +379,7 @@ final class JECS_Swatches_Renderer {
 			if ( ! $image_id ) {
 				continue;
 			}
-			$url = wp_get_attachment_image_url( $image_id, $image_size );
+			$url = $this->get_image_url( $image_id, $image_size );
 			if ( $url ) {
 				$map[ $term_slug ] = $url;
 			}
@@ -314,6 +390,50 @@ final class JECS_Swatches_Renderer {
 	private function get_attribute_label( string $taxonomy ): string {
 		$label = wc_attribute_label( $taxonomy );
 		return $label ?: str_replace( 'pa_', '', $taxonomy );
+	}
+
+	/**
+	 * Ottiene il tipo di swatch definito a livello di attributo
+	 */
+	private function get_attribute_swatch_type( string $taxonomy ): string {
+		if ( strpos( $taxonomy, 'pa_' ) !== 0 ) {
+			return '';
+		}
+
+		$attribute_name = str_replace( 'pa_', '', $taxonomy );
+		$attribute_taxonomies = wc_get_attribute_taxonomies();
+
+		foreach ( $attribute_taxonomies as $tax ) {
+			if ( $tax->attribute_name === $attribute_name ) {
+				$attribute_id = $tax->attribute_id;
+				$swatch_type = get_option( 'jecs_swatch_type_' . $attribute_id, '' );
+				return $swatch_type;
+			}
+		}
+
+		return '';
+	}
+
+	/**
+	 * Verifica se l'attributo deve essere mostrato nel listing
+	 */
+	private function is_attribute_show_in_listing( string $taxonomy ): bool {
+		if ( strpos( $taxonomy, 'pa_' ) !== 0 ) {
+			return false;
+		}
+
+		$attribute_name = str_replace( 'pa_', '', $taxonomy );
+		$attribute_taxonomies = wc_get_attribute_taxonomies();
+
+		foreach ( $attribute_taxonomies as $tax ) {
+			if ( $tax->attribute_name === $attribute_name ) {
+				$attribute_id = $tax->attribute_id;
+				$show_in_listing = get_option( 'jecs_show_in_listing_' . $attribute_id, false );
+				return (bool) $show_in_listing;
+			}
+		}
+
+		return false;
 	}
 
 	private function get_attribute_slug_from_term( $term ): string {

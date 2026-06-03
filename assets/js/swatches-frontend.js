@@ -165,13 +165,17 @@
 
 		var width = sizeMatch[1];
 		var height = sizeMatch[2];
-		var ext = sizeMatch[3];
+		var refExt = sizeMatch[3];
+
+		/* Estrae l'estensione originale dall'URL target */
+		var targetExtMatch = url.match( /\.([^.]+)$/ );
+		var targetExt = targetExtMatch ? targetExtMatch[1] : refExt;
 
 		/* Rimuove eventuali dimensioni esistenti dall'URL target */
-		var resizedUrl = url.replace( /-\d+x\d+\.[^.]+$/, '.' + ext );
+		var resizedUrl = url.replace( /-\d+x\d+\.[^.]+$/, '.' + targetExt );
 
-		/* Aggiunge la nuova dimensione */
-		return resizedUrl.replace( '.' + ext, '-' + width + 'x' + height + '.' + ext );
+		/* Aggiunge la nuova dimensione mantenendo l'estensione originale del target */
+		return resizedUrl.replace( '.' + targetExt, '-' + width + 'x' + height + '.' + targetExt );
 	}
 
 	function jecsPreload( img ) {

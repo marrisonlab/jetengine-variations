@@ -252,6 +252,10 @@ class JECS_Elementor_Widget extends Widget_Base {
 			return;
 		}
 
+		// Determina il contesto: se siamo in un listing grid, usa 'listing'
+		// TODO: Aggiungere controllo migliore per determinare il contesto
+		$is_listing = isset( $settings['product_id_source'] ) && 'current' === $settings['product_id_source'];
+
 		$options = [
 			'size'         => (int) ( $settings['swatch_size']['size'] ?? 28 ),
 			'shape'        => $settings['swatch_shape'] ?? 'circle',
@@ -260,6 +264,7 @@ class JECS_Elementor_Widget extends Widget_Base {
 			'max_swatches' => (int) ( $settings['max_swatches'] ?? 0 ),
 			'gap'          => (int) ( $settings['swatch_gap']['size'] ?? 6 ),
 			'image_size'   => $settings['variation_image_size'] ?? 'large',
+			'context'      => 'listing', // Forzato a listing per testare il filtro
 		];
 
 		$taxonomy = ! empty( $settings['filter_taxonomy'] ) ? sanitize_key( $settings['filter_taxonomy'] ) : null;

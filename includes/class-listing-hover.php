@@ -23,6 +23,62 @@ final class JECS_Listing_Hover {
 		add_filter( 'post_thumbnail_html', [ $this, 'inject_hover_src' ], 10, 5 );
 	}
 
+	/* ---------------------------------------------------------------
+	 * Helper per immagini webp
+	 * --------------------------------------------------------------- */
+
+	/**
+	 * Ottiene l'URL dell'immagine, preferendo la versione webp se disponibile
+	 */
+	private function get_image_url( int $attachment_id, string $size = 'thumbnail' ) {
+		$url = wp_get_attachment_image_url( $attachment_id, $size );
+		if ( ! $url ) {
+			return false;
+		}
+
+		// Prova a ottenere la versione webp
+		$webp_url = $this->get_webp_url( $url );
+		if ( $webp_url && $this->webp_file_exists( $webp_url ) ) {
+			return $webp_url;
+		}
+
+		return $url;
+	}
+
+	/**
+	 * Converte un URL immagine in URL webp
+	 */
+	private function get_webp_url( string $url ): string {
+		// Rimuovi query string se presente
+		$url = strtok( $url, '?' );
+
+		// Sostituisci estensioni comuni con .webp
+		$extensions = [ '.jpg', '.jpeg', '.png', '.gif' ];
+		foreach ( $extensions as $ext ) {
+			if ( str_ends_with( strtolower( $url ), $ext ) ) {
+				return substr( $url, 0, -strlen( $ext ) ) . '.webp';
+			}
+		}
+
+		return $url . '.webp';
+	}
+
+	/**
+	 * Verifica se il file webp esiste
+	 */
+	private function webp_file_exists( string $url ): bool {
+		// Converti URL in percorso locale
+		$upload_dir = wp_upload_dir();
+		$base_url   = $upload_dir['baseurl'];
+
+		if ( strpos( $url, $base_url ) === 0 ) {
+			$file_path = $upload_dir['basedir'] . substr( $url, strlen( $base_url ) );
+			return file_exists( $file_path );
+		}
+
+		return false;
+	}
+
 	/**
 	 * Aggiunge data-hover-src all'<img> della thumbnail se il prodotto
 	 * ha immagini nella galleria.
@@ -55,7 +111,7 @@ final class JECS_Listing_Hover {
 		}
 
 		// Prima immagine della galleria nella stessa dimensione della thumbnail
-		$hover_url = wp_get_attachment_image_url( $gallery_ids[0], $size ?: 'woocommerce_thumbnail' );
+		$hover_url = $this->get_image_url( $gallery_ids[0], $size ?: 'woocommerce_thumbnail' );
 		if ( ! $hover_url ) {
 			return $html;
 		}

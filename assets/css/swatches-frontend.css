@@ -51,20 +51,23 @@
 }
 
 /* ---- Swatch testuale (per taglie) ---- */
-.jecs-swatch--text .jecs-swatch__inner {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	padding: 0 8px;
-	min-width: var(--jecs-size, 36px);
-	min-height: var(--jecs-size, 36px);
-	background-color: #ffffff;
-	font-size: 12px;
-	font-weight: 500;
-	color: #333333;
-	line-height: 1.2;
-	text-transform: uppercase;
-	white-space: nowrap;
+.jecs-swatch--circle.jecs-swatch--text .jecs-swatch__inner,
+.jecs-swatch--square.jecs-swatch--text .jecs-swatch__inner,
+.jecs-swatch--rounded.jecs-swatch--text .jecs-swatch__inner {
+	display: flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	padding: 15px !important;
+	min-width: var(--jecs-size, 36px) !important;
+	min-height: var(--jecs-size, 36px) !important;
+	background-color: #ffffff !important;
+	font-size: 12px !important;
+	font-weight: 500 !important;
+	color: #333333 !important;
+	line-height: 1.2 !important;
+	text-transform: uppercase !important;
+	white-space: nowrap !important;
+	border-radius: 0 !important;
 }
 
 .jecs-swatch--text:hover .jecs-swatch__inner {
