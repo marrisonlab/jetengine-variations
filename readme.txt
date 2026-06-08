@@ -1,49 +1,49 @@
 === JetEngine Color Swatches ===
 Contributors: Marrisonlab
-Tags: woocommerce, elementor, jetengine, swatch, variazioni, colore
+Tags: woocommerce, elementor, jetengine, swatch, variations, color
 Requires at least: 6.0
 Tested up to: 6.5
 Requires PHP: 7.4
 WC requires at least: 7.0
 License: GPLv2 or later
 
-Widget Elementor per mostrare swatch colori delle variazioni WooCommerce.
-Compatibile con JetEngine Listing Grid e pagina singolo prodotto.
+Elementor widget to display WooCommerce variation color swatches.
+Compatible with JetEngine Listing Grid and single product page.
 
-== Installazione ==
+== Installation ==
 
-1. Carica la cartella `jetengine-color-swatches` in `/wp-content/plugins/`
-2. Attiva il plugin da WP Admin → Plugin
-3. Vai su WooCommerce → Attributi → scegli un attributo → modifica i termini
-4. Per ogni termine configura: Tipo (Colore / Immagine), Colore 1, Colore 2 (opzionale)
-5. Nel builder Elementor trascina il widget "Color Swatches Variazioni"
+1. Upload the `jetengine-color-swatches` folder to `/wp-content/plugins/`
+2. Activate the plugin from WP Admin → Plugins
+3. Go to WooCommerce → Attributes → select an attribute → edit the terms
+4. For each term configure: Type (Color / Image), Color 1, Color 2 (optional)
+5. In the Elementor builder drag the "Color Swatches Variazioni" widget
 
-== Funzionalità ==
+== Features ==
 
-* Swatch colore singolo o doppio (split diagonale 135°)
-* Swatch immagine (media library WP)
-* Forme: cerchio, quadrato, rettangolo arrotondato
-* Tooltip con nome variazione
-* Stato out-of-stock (swatch trasparente con barra diagonale)
-* Contatore "+N" per swatch in eccesso
-* Click sullo swatch → sincronizza il select nativo WooCommerce (singolo prodotto)
-* Compatibile con JetEngine Listing Grid (event delegation, no re-init necessario)
-* Controlli stile completi nel pannello Elementor
+* Single or dual color swatch (135° diagonal split)
+* Image swatch (WP media library)
+* Shapes: circle, square, rounded rectangle
+* Tooltip with variation name
+* Out-of-stock status (transparent swatch with diagonal strike)
+* "+N" counter for excess swatches
+* Click on swatch → syncs with native WooCommerce select (single product)
+* Compatible with JetEngine Listing Grid (event delegation, no re-init needed)
+* Complete style controls in Elementor panel
 
-== Struttura file ==
+== File Structure ==
 
 jetengine-color-swatches.php       – Plugin entry point
 includes/
-  class-admin-settings.php         – Pannello admin, term meta, media uploader
-  class-swatches-renderer.php      – Generazione HTML swatch
-  class-elementor-widget.php       – Widget Elementor con tutti i controlli
+  class-admin-settings.php         – Admin panel, term meta, media uploader
+  class-swatches-renderer.php      – Swatch HTML generation
+  class-elementor-widget.php       – Elementor widget with all controls
 assets/
-  css/swatches-frontend.css        – Stili frontend
-  css/swatches-admin.css           – Stili admin
-  js/swatches-frontend.js          – Interazione frontend (click, sync WC)
+  css/swatches-frontend.css        – Frontend styles
+  css/swatches-admin.css           – Admin styles
+  js/swatches-frontend.js          – Frontend interaction (click, sync WC)
   js/swatches-admin.js             – Color picker, media uploader admin
 
 == Changelog ==
 
 = 1.0.0 =
-* Prima release
+* Initial release
