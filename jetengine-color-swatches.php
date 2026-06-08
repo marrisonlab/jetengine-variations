@@ -1,10 +1,11 @@
 <?php
 /**
  * Plugin Name: JetEngine Color Swatches
- * Plugin URI:  https://github.com/Angelo/jetengine-variations
+ * Plugin URI:  https://github.com/marrisonlab/jetengine-variations
  * Description: Elementor widget per mostrare gli swatch colori delle variazioni WooCommerce, compatibile con JetEngine listing e singolo prodotto. Supporta colore singolo e doppio (split diagonale).
  * Version:     1.0.1
- * Author:      Angelo
+ * Author:      Marrisonlab
+ * Author URI:  https://marrisonlab.com
  * Text Domain: je-color-swatches
  * Domain Path: /languages
  * Requires at least: 6.0

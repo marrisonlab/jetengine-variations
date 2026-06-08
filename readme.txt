@@ -1,5 +1,5 @@
 === JetEngine Color Swatches ===
-Contributors: Angelo
+Contributors: Marrisonlab
 Tags: woocommerce, elementor, jetengine, swatch, variazioni, colore
 Requires at least: 6.0
 Tested up to: 6.5
