@@ -5,6 +5,7 @@ Requires at least: 6.0
 Tested up to: 6.5
 Requires PHP: 7.4
 WC requires at least: 7.0
+Stable tag: 1.0.2
 License: GPLv2 or later
 
 Elementor widget to display WooCommerce variation color swatches.
@@ -44,6 +45,9 @@ assets/
   js/swatches-admin.js             – Color picker, media uploader admin
 
 == Changelog ==
+
+= 1.0.2 =
+* Removed listing debug messages from the WordPress debug log while preserving swatch rendering behavior.
 
 = 1.0.0 =
 * Initial release

@@ -128,10 +128,8 @@ final class JECS_Swatches_Renderer {
 			}
 			// Se siamo in listing, verifica il flag show_in_listing
 			if ( 'listing' === $options['context'] && ! $this->is_attribute_show_in_listing( $attr_taxonomy ) ) {
-				error_log( 'JECS Listing Filter - Skipping ' . $attr_taxonomy . ' (show_in_listing flag not set)' );
 				continue;
 			}
-			error_log( 'JECS Listing Filter - Rendering ' . $attr_taxonomy . ' (context: ' . $options['context'] . ', is_single_product: ' . ( $is_single_product ? 'true' : 'false' ) . ')' );
 			$output .= $this->render_attribute_swatches( $product_id, $attr_taxonomy, $values, $options );
 		}
 
